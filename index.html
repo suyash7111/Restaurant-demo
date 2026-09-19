@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA & EMBER — Woodfire Hearth & Fine Dining</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Linked Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Film grain luxury texture -->
+  <div class="film-grain"></div>
+
+  <!-- Warm ambient cursor glow -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- Background Music Audio (Local file + Reliable Web stream fallback) -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="ambience.mp3" type="audio/mpeg">
+    <source src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Gymnopedie_No._1_%28ISRC_USUAN1100787%29.mp3" type="audio/mpeg">
+    <source src="ambience.ogg" type="audio/ogg">
+  </audio>
+
+  <!-- Ambient Music & Hearth toggle button -->
+  <button class="ambience-toggle" id="ambienceBtn" aria-label="Toggle Cozy Restaurant Music">
+    <div class="sound-bars">
+      <div class="sound-bar"></div>
+      <div class="sound-bar"></div>
+      <div class="sound-bar"></div>
+    </div>
+    <span id="ambienceText">Hearth Fire Ambience</span>
+  </button>
+
+  <!-- Navigation -->
+  <nav class="navbar" id="navbar">
+    <a href="#" class="nav-brand">
+      <span class="nav-brand-title">Aura & Ember</span>
+      <span class="nav-brand-sub">Woodfire & Wine Cellar</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#about" class="nav-link">The Story</a></li>
+      <li><a href="#cutouts" class="nav-link">Craft</a></li>
+      <li><a href="#menu" class="nav-link">Tasting Menu</a></li>
+      <li><a href="#cellar" class="nav-link">The Cellar</a></li>
+      <li><a href="#reserve" class="nav-link">Reservations</a></li>
+    </ul>
+
+    <div class="nav-action">
+      <a href="#reserve" class="btn-lux btn-lux-primary">Book A Table</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section with Arch Cutout Portal -->
+  <header class="hero">
+    <div class="hero-bg-ambient"></div>
+
+    <div class="hero-grid">
+      <div class="hero-content reveal-elem">
+        <div class="eyebrow">A Cozy Woodfire Experience</div>
+        <h1 class="hero-title serif">
+          Where Every Flame 
+          <span>Tells A Story.</span>
+        </h1>
+        <p class="hero-description">
+          Welcome to an intimate evening shaped by glowing embers, handpicked seasonal ingredients, and fine cellar wines. Here, dinner is never rushed — every table is set for an unforgettable memory.
+        </p>
+        <div class="hero-actions">
+          <a href="#reserve" class="btn-lux btn-lux-primary">
+            Reserve Your Seat <i data-lucide="arrow-up-right" style="width:16px;height:16px;"></i>
+          </a>
+          <a href="#menu" class="btn-lux btn-lux-outline">
+            Explore Menu
+          </a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h4>3 ★</h4>
+            <p>Michelin Guide '25</p>
+          </div>
+          <div class="stat-item">
+            <h4>700°</h4>
+            <p>Applewood Hearth</p>
+          </div>
+          <div class="stat-item">
+            <h4>480+</h4>
+            <p>Curated Vintages</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual with Arched Cutout & Floating Badges -->
+      <div class="hero-visual-wrapper reveal-elem">
+        <div class="arch-cutout-container">
+          <div class="arch-cutout-inner">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop" alt="Gourmet dining table with candlelit woodfire warmth">
+          </div>
+        </div>
+
+        <!-- Floating Award Badge -->
+        <div class="floating-cutout-badge">
+          <div class="badge-icon-wrap">
+            <i data-lucide="flame" style="width:20px;height:20px;"></i>
+          </div>
+          <div>
+            <div class="badge-text-top">Woodfire Hearth</div>
+            <div class="badge-text-main">Aged Oak & Ash Coals</div>
+          </div>
+        </div>
+
+        <!-- Floating Star Rating -->
+        <div class="floating-star-rating">
+          <div class="stars-group">
+            <i data-lucide="star" style="width:14px;height:14px;fill:#ffb74d;"></i>
+            <i data-lucide="star" style="width:14px;height:14px;fill:#ffb74d;"></i>
+            <i data-lucide="star" style="width:14px;height:14px;fill:#ffb74d;"></i>
+            <i data-lucide="star" style="width:14px;height:14px;fill:#ffb74d;"></i>
+            <i data-lucide="star" style="width:14px;height:14px;fill:#ffb74d;"></i>
+          </div>
+          <span>4.9 / 5.0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cutout Gallery Section (Scroll Cutouts) -->
+  <section class="scroll-cutout-section" id="cutouts">
+    <div class="section-header reveal-elem">
+      <div class="eyebrow">Culinary Geometry</div>
+      <h2 class="section-title serif">Framed in Warmth & Shadow</h2>
+      <p class="section-subtitle">
+        Every dish is sculpted by live flame, native botanicals, and ancestral ferments. Witness our sensory spaces through our signature architectural portals.
+      </p>
+    </div>
+
+    <div class="cutout-composition">
+      <!-- Left Pill Cutout -->
+      <div class="cutout-card cutout-pill reveal-elem">
+        <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1000&auto=format&fit=crop" alt="Fine dining woodfire smoked scallop appetizer">
+      </div>
+
+      <!-- Monument Center Cutout -->
+      <div class="cutout-card cutout-center-monument reveal-elem">
+        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1400&auto=format&fit=crop" alt="Atmospheric candlelit dining hall">
+        <div class="cutout-monument-overlay">
+          <span class="monument-tag">The Dining Room</span>
+          <h3 class="monument-heading">Shadow, Amber, and Velvet Comfort</h3>
+          <p style="color: var(--cream-muted); font-size: 0.88rem; font-weight: 300;">
+            Designed by studio atelier to feel like a secluded sanctuary from the bustling world outside.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Arch Cutout -->
+      <div class="cutout-card cutout-notched reveal-elem">
+        <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=1000&auto=format&fit=crop" alt="Artisanal dessert infused with smoked caramel">
+      </div>
+    </div>
+  </section>
+
+  <!-- Story & Philosophy Section -->
+  <section class="story-section" id="about">
+    <div class="story-grid">
+      <div class="story-image-wrap reveal-elem">
+        <div class="keyhole-cutout">
+          <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?q=80&w=1200&auto=format&fit=crop" alt="Executive Chef preparing tasting plate">
+        </div>
+        <div class="experience-badge">
+          <span>16</span>
+          <span>Years of Heritage</span>
+        </div>
+      </div>
+
+      <div class="story-content reveal-elem">
+        <div class="eyebrow">The Philosophy</div>
+        <h2 class="serif">Born of Embers, Sustained by Grace.</h2>
+        <p>
+          Founded by Chef Julian Vance, <em>Aura & Ember</em> strips away the sterile formality of modern dining. Instead, we return to the primal magic of fire, seasoned timber, and locally harvested ingredients.
+        </p>
+        <p>
+          Each evening, a 9-course tasting journey is presented alongside curated pairings from independent biodynamic winemakers and rare cellar selections.
+        </p>
+
+        <div class="story-features">
+          <div class="story-feat">
+            <i data-lucide="sparkles" class="story-feat-icon"></i>
+            <div>
+              <h5>Hyper-Local Sourcing</h5>
+              <p>90% of ingredients are harvested within a 40-mile radius.</p>
+            </div>
+          </div>
+          <div class="story-feat">
+            <i data-lucide="wine" class="story-feat-icon"></i>
+            <div>
+              <h5>Low-Intervention Vintages</h5>
+              <p>Cellar curated with single-vineyard biodynamic estates.</p>
+            </div>
+          </div>
+          <div class="story-feat">
+            <i data-lucide="clock" class="story-feat-icon"></i>
+            <div>
+              <h5>3-Hour Seating</h5>
+              <p>No rushed turnaround. Your table is yours for the evening.</p>
+            </div>
+          </div>
+          <div class="story-feat">
+            <i data-lucide="award" class="story-feat-icon"></i>
+            <div>
+              <h5>Bespoke Hospitality</h5>
+              <p>Tailored dietary harmonies curated per individual guest.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tasting Menu Section with Interactive Tabs -->
+  <section class="menu-section" id="menu">
+    <div class="section-header reveal-elem">
+      <div class="eyebrow">Culinary Repertoire</div>
+      <h2 class="section-title serif">Seasonal Tastings & Offerings</h2>
+      <p class="section-subtitle">
+        Autumn/Winter Chapter: An exploration of charred stone fruits, aged venison, and live hearth embers.
+      </p>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="menu-tabs reveal-elem">
+      <button class="tab-btn active" onclick="filterMenu('tasting')">Chef's Tasting (9-Course)</button>
+      <button class="tab-btn" onclick="filterMenu('alacarte')">À La Carte</button>
+      <button class="tab-btn" onclick="filterMenu('cellar')">Sommelier Reserve</button>
+    </div>
+
+    <div class="menu-grid" id="menuContainer">
+      <!-- Item 1 -->
+      <div class="menu-item-card reveal-elem" data-cat="tasting">
+        <div class="menu-img-cutout">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=300&auto=format&fit=crop" alt="Smoked King Oyster Mushroom">
+        </div>
+        <div class="menu-details">
+          <div class="menu-header-row">
+            <h4 class="menu-item-title">Hearth-Smoked King Oyster</h4>
+            <span class="menu-item-price">$34</span>
+          </div>
+          <p class="menu-item-desc">Applewood smoke, black garlic emulsion, toasted hazelnut butter, and fermented pine honey.</p>
+          <div class="menu-badges">
+            <span class="badge-tag">Signature</span>
+            <span class="badge-tag">Vegetarian</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="menu-item-card reveal-elem" data-cat="tasting">
+        <div class="menu-img-cutout">
+          <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=300&auto=format&fit=crop" alt="Diver Scallop">
+        </div>
+        <div class="menu-details">
+          <div class="menu-header-row">
+            <h4 class="menu-item-title">Charred Hokkaido Scallop</h4>
+            <span class="menu-item-price">$42</span>
+          </div>
+          <p class="menu-item-desc">Coal-seared with dashi beurre blanc, crispy nori wafer, and pickled sea grapes.</p>
+          <div class="menu-badges">
+            <span class="badge-tag">Course 3</span>
+            <span class="badge-tag">Gluten-Free</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="menu-item-card reveal-elem" data-cat="alacarte">
+        <div class="menu-img-cutout">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=300&auto=format&fit=crop" alt="Dry Aged Wagyu">
+        </div>
+        <div class="menu-details">
+          <div class="menu-header-row">
+            <h4 class="menu-item-title">45-Day Dry-Aged A5 Wagyu</h4>
+            <span class="menu-item-price">$98</span>
+          </div>
+          <p class="menu-item-desc">Binchotan grilled with bone marrow jus, roasted sunchoke mousseline, and smoked leek ash.</p>
+          <div class="menu-badges">
+            <span class="badge-tag">Miyazaki A5</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 4 -->
+      <div class="menu-item-card reveal-elem" data-cat="alacarte">
+        <div class="menu-img-cutout">
+          <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?q=80&w=300&auto=format&fit=crop" alt="Smoked Chocolate Ganache">
+        </div>
+        <div class="menu-details">
+          <div class="menu-header-row">
+            <h4 class="menu-item-title">Smoked Valrhona Ganache</h4>
+            <span class="menu-item-price">$26</span>
+          </div>
+          <p class="menu-item-desc">70% Guanaja chocolate, charred cherry reduction, salted hickory caramel, espresso foam.</p>
+          <div class="menu-badges">
+            <span class="badge-tag">Dessert</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 5 (Cellar) -->
+      <div class="menu-item-card reveal-elem" data-cat="cellar">
+        <div class="menu-img-cutout">
+          <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=300&auto=format&fit=crop" alt="Domaine Barolo">
+        </div>
+        <div class="menu-details">
+          <div class="menu-header-row">
+            <h4 class="menu-item-title">Barolo Riserva 'Cascina' 2016</h4>
+            <span class="menu-item-price">$185</span>
+          </div>
+          <p class="menu-item-desc">Piedmont, Italy. Aged 48 months in Slavonian oak. Notes of dried rose petal, truffle, and leather.</p>
+          <div class="menu-badges">
+            <span class="badge-tag">Sommelier Select</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item 6 (Cellar) -->
+      <div class="menu-item-card reveal-elem" data-cat="cellar">
+        <div class="menu-img-cutout">
+          <img src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=300&auto=format&fit=crop" alt="Meursault Premier Cru">
+        </div>
+        <div class="menu-details">
+          <div class="menu-header-row">
+            <h4 class="menu-item-title">Meursault 1er Cru 'Charmes' 2019</h4>
+            <span class="menu-item-price">$210</span>
+          </div>
+          <p class="menu-item-desc">Burgundy, France. Mineral crispness balanced with brioche, hazelnut, and flintstone elegance.</p>
+          <div class="menu-badges">
+            <span class="badge-tag">White Burgundy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cellar Atmospheric Quote Banner -->
+  <section class="cellar-feature" id="cellar">
+    <div class="cellar-content reveal-elem">
+      <div class="eyebrow" style="color: var(--amber-light);">The Sommelier's Vault</div>
+      <p class="cellar-quote">
+        "Wine is sunlight, held together by water and the patient discipline of oak."
+      </p>
+      <p style="color: var(--cream-muted); font-size: 0.95rem; margin-bottom: 30px;">
+        Over 480 labels stored at a constant 13°C in our subterranean limestone vault.
+      </p>
+      <a href="#reserve" class="btn-lux btn-lux-outline">Request Cellar Tour & Private Room</a>
+    </div>
+  </section>
+
+  <!-- Table Reservation Section -->
+  <section class="reserve-section" id="reserve">
+    <div class="reserve-card reveal-elem">
+      <div class="reserve-header">
+        <div class="eyebrow">Table Appointments</div>
+        <h2 class="serif" style="font-size: clamp(2.4rem, 4vw, 3.5rem); margin-bottom: 12px;">Reserve Your Evening</h2>
+        <p style="color: var(--cream-muted); font-size: 0.95rem;">
+          To preserve an intimate atmosphere, we only accommodate 36 guests each evening.
+        </p>
+      </div>
+
+      <form class="booking-form" id="bookingForm" onsubmit="handleBooking(event)">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="guestName" placeholder="e.g. Eleanor Vance" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="guestEmail" placeholder="eleanor@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" class="form-input" id="guestPhone" placeholder="+1 (555) 000-0000" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-input" required id="bookingDate">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Time Seating</label>
+          <select class="form-select" id="bookingTime" required>
+            <option value="">Select Seating Time</option>
+            <option value="17:30">Early Evening — 5:30 PM</option>
+            <option value="19:00">Twilight Hearth — 7:00 PM</option>
+            <option value="20:45">Prime Seating — 8:45 PM</option>
+            <option value="22:00">Nightcap Tasting — 10:00 PM</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Party Size</label>
+          <select class="form-select" id="partySize" required>
+            <option value="2">2 Guests (Intimate Table)</option>
+            <option value="4">4 Guests (Hearthside)</option>
+            <option value="6">6 Guests (Alcove Dining)</option>
+            <option value="8">Chef's Table (8-10 Guests)</option>
+          </select>
+        </div>
+
+        <!-- Table availability suggestions appear here -->
+        <div class="availability-notice" id="availabilityNotice" role="status" aria-live="polite"></div>
+
+        <div class="form-group full-width">
+          <label class="form-label">Special Requests & Dietary Accommodations</label>
+          <input type="text" class="form-input" id="specialRequests" placeholder="Allergies, anniversaries, or wine cellar preferences...">
+        </div>
+
+        <div class="booking-btn-wrap">
+          <button type="submit" class="btn-lux btn-lux-primary" style="padding: 16px 48px; font-size: 0.9rem;">
+            Confirm Reservation Request
+          </button>
+        </div>
+      </form>
+
+      <div class="booking-success-toast" id="bookingSuccess">
+        <i data-lucide="check-circle" style="display:inline-block; vertical-align:middle; margin-right:8px; width:20px; height:20px;"></i>
+        Thank you. Your table reservation request has been received. Our Maître D' will contact you within 2 hours to confirm.
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <h3>Aura & Ember</h3>
+        <p>
+          An intimate study in woodfire gastronomy and subterranean wines. Michelin Three-Star Guide recognition 2024–2025.
+        </p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Location & Contact</h5>
+        <ul>
+          <li>742 Evergreen Terrace, St. Claire District</li>
+          <li>reservations@auraandember.com</li>
+          <li>+1 (212) 849-2041</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Hours of Service</h5>
+        <ul>
+          <li>Tuesday — Sunday: 5:30 PM – 11:30 PM</li>
+          <li>Monday: Cellar Rest & Private Events</li>
+          <li>Valet Parking Available</li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Follow & Press</h5>
+        <ul>
+          <li><a href="#">Instagram @aura.ember</a></li>
+          <li><a href="#">Michelin Guide Feature</a></li>
+          <li><a href="#">World's 50 Best Discovery</a></li>
+          <li><a href="#">Press Kit & Imagery</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div>© 2026 Aura & Ember Atelier Inc. All Rights Reserved.</div>
+      <div>Crafted for the Epicurean Connoisseur.</div>
+    </div>
+  </footer>
+
+  <!-- Linked JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
