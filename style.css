@@ -1114,30 +1114,250 @@ body {
   to { height: 14px; }
 }
 
-/* Responsiveness */
-@media (max-width: 1024px) {
-  .navbar { padding: 20px 30px; }
-  .navbar.scrolled { padding: 14px 30px; }
-  .hero { padding: 130px 30px 60px; }
-  .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 50px; }
-  .hero-content { max-width: 100%; margin: 0 auto; }
-  .hero-actions { justify-content: center; }
-  .hero-stats { justify-content: center; }
-  .cutout-composition { grid-template-columns: 1fr; gap: 30px; }
-  .cutout-center-monument { height: 480px; }
-  .story-grid { grid-template-columns: 1fr; gap: 50px; }
-  .menu-grid { grid-template-columns: 1fr; }
-  .booking-form { grid-template-columns: 1fr 1fr; }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
+/* ==========================================================================
+   RESPONSIVE DESIGN (mobile • tablet • laptop)
+   Breakpoints: 1100px (hamburger menu) • 1024px (tablet) • 768px • 600px (phone) • 480px (small phone)
+   ========================================================================== */
+
+/* ---------- Base additions (apply on every screen size) ---------- */
+img { max-width: 100%; }
+
+.hero { min-height: 100vh; min-height: 100svh; }
+
+/* Hamburger button (hidden on desktop) */
+.nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+.nav-toggle:hover { border-color: var(--amber-glow); }
+.nav-toggle-bar {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background: var(--amber-light);
+  border-radius: 2px;
+  transition: transform 0.35s var(--ease-cinematic), opacity 0.25s ease;
+}
+.navbar.menu-open .nav-toggle-bar:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.navbar.menu-open .nav-toggle-bar:nth-child(2) { opacity: 0; }
+.navbar.menu-open .nav-toggle-bar:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* "Book A Table" button that lives inside the mobile menu */
+.nav-menu-cta { display: none; }
+
+/* Form fields: never overflow their column, dark native pickers */
+.form-input, .form-select {
+  width: 100%;
+  min-width: 0;
+  color-scheme: dark;
+}
+.form-input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 50px;
+}
+.booking-btn-wrap .btn-lux { padding: 16px 48px; font-size: 0.9rem; }
+
+/* ---------- Small laptops / large tablets: hamburger menu ---------- */
+@media (max-width: 1100px) {
+  .navbar { padding: 18px 30px; }
+  .navbar.scrolled { padding: 12px 30px; }
+
+  .nav-toggle { display: flex; }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 8px 30px 24px;
+    background: rgba(9, 8, 7, 0.97);
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 30px 40px rgba(0, 0, 0, 0.6);
+    max-height: calc(100vh - 80px);
+    max-height: calc(100dvh - 80px);
+    overflow-y: auto;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-12px);
+    pointer-events: none;
+    transition: opacity 0.35s var(--ease-smooth), transform 0.35s var(--ease-cinematic), visibility 0.35s;
+  }
+  .navbar.menu-open .nav-links {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+  }
+  .navbar.menu-open {
+    background: rgba(9, 8, 7, 0.97);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .nav-links li { border-bottom: 1px solid var(--border-light); }
+  .nav-link { display: block; padding: 16px 4px; font-size: 0.85rem; }
+  .nav-link::after { display: none; }
+  .nav-links .nav-menu-cta { display: block; border-bottom: none; padding-top: 20px; }
+  .nav-menu-cta .btn-lux { width: 100%; }
 }
 
+/* ---------- Tablets ---------- */
+@media (max-width: 1024px) {
+  .hero { padding: 130px 30px 70px; }
+  .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 50px; }
+  .hero-content { max-width: 680px; margin: 0 auto; }
+  .hero-actions { justify-content: center; }
+  .hero-stats { max-width: 560px; margin-left: auto; margin-right: auto; }
+
+  .scroll-cutout-section, .menu-section { padding: 100px 30px; }
+  .section-header { margin-bottom: 50px; }
+  .cutout-composition { grid-template-columns: 1fr; gap: 30px; max-width: 720px; }
+  .cutout-pill, .cutout-notched { height: 420px; }
+  .cutout-center-monument { height: 480px; }
+
+  .story-section { padding: 90px 30px; }
+  .story-grid { grid-template-columns: 1fr; gap: 60px; }
+  .story-image-wrap { width: 100%; max-width: 480px; margin: 0 auto; }
+
+  .menu-grid { grid-template-columns: 1fr; max-width: 720px; gap: 24px; }
+
+  .cellar-feature { padding: 100px 30px; background-attachment: scroll; }
+
+  .reserve-section { padding: 100px 30px; }
+  .reserve-card { padding: 50px 40px; }
+  .booking-form { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .footer { padding: 80px 30px 40px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 50px 40px; }
+}
+
+/* ---------- Large phones / small tablets ---------- */
 @media (max-width: 768px) {
-  .nav-links { display: none; }
   .arch-cutout-container { width: 300px; height: 420px; }
   .floating-cutout-badge { left: -10px; bottom: 10px; padding: 12px 16px; }
   .floating-star-rating { right: -10px; top: 20px; }
-  .booking-form { grid-template-columns: 1fr; }
-  .reserve-card { padding: 40px 24px; }
-  .footer-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 14px; }
+  .stat-item h4 { font-size: 1.8rem; }
+
+  .cutout-monument-overlay { padding: 28px; }
+  .monument-heading { font-size: 1.8rem; }
+  .keyhole-cutout { height: 460px; }
+
+  .booking-form { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .reserve-card { padding: 40px 24px; border-radius: 28px; }
+  .reserve-header { margin-bottom: 36px; }
+  /* 16px stops iPhones from zooming in when a field is tapped */
+  .form-input, .form-select { font-size: 16px; }
+
   .footer-bottom { flex-direction: column; gap: 14px; text-align: center; }
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 600px) {
+  .navbar { padding: 14px 20px; }
+  .navbar.scrolled { padding: 10px 20px; }
+  .nav-links { padding: 8px 20px 22px; }
+  .nav-action .btn-lux { display: none; }          /* button moves into the menu */
+  .nav-brand-title { font-size: 1.35rem; letter-spacing: 0.14em; }
+  .nav-brand-sub { font-size: 0.52rem; letter-spacing: 0.28em; }
+
+  .btn-lux { padding: 14px 26px; letter-spacing: 0.12em; line-height: 1.4; text-align: center; }
+
+  .hero { padding: 110px 20px 60px; }
+  .hero-title { font-size: clamp(2.5rem, 12vw, 3.2rem); }
+  .hero-description { font-size: 0.98rem; margin-bottom: 30px; }
+  .hero-actions { flex-direction: column; align-items: stretch; gap: 14px; }
+  .hero-actions .btn-lux { width: 100%; }
+  .hero-stats { margin-top: 40px; padding-top: 24px; gap: 10px; }
+  .stat-item h4 { font-size: 1.6rem; }
+  .stat-item p { font-size: 0.6rem; letter-spacing: 0.1em; }
+
+  .scroll-cutout-section, .menu-section, .story-section, .reserve-section, .cellar-feature { padding: 80px 20px; }
+  .section-header { margin-bottom: 40px; }
+
+  .cutout-pill, .cutout-notched { height: 360px; }
+  .cutout-center-monument { height: 420px; }
+  .cutout-monument-overlay { padding: 24px; }
+  .monument-heading { font-size: 1.6rem; }
+
+  .keyhole-cutout { height: 400px; }
+  .experience-badge { width: 104px; height: 104px; right: 0; }
+  .experience-badge span:first-child { font-size: 1.8rem; }
+  .story-features { grid-template-columns: 1fr; gap: 20px; }
+  .story-content p { font-size: 1rem; }
+
+  .menu-tabs { gap: 10px; margin-bottom: 40px; }
+  .tab-btn { padding: 10px 18px; font-size: 0.7rem; letter-spacing: 0.1em; }
+  .menu-item-card { padding: 18px; gap: 16px; }
+  .menu-img-cutout { width: 76px; height: 76px; }
+  .menu-header-row { flex-wrap: wrap; gap: 2px 12px; }
+  .menu-item-title { font-size: 1.25rem; }
+  .menu-item-price { font-size: 1.2rem; }
+  .menu-badges { flex-wrap: wrap; }
+
+  .cellar-content .btn-lux { width: 100%; }
+
+  .reserve-card { padding: 36px 20px; }
+  .availability-notice { padding: 18px; }
+  .availability-title { font-size: 1.3rem; }
+  .avail-chip { flex: 1 1 auto; text-align: center; padding: 12px 16px; }
+  .booking-btn-wrap .btn-lux { width: 100%; padding: 16px 24px; }
+
+  .footer { padding: 64px 20px 30px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 40px; margin-bottom: 50px; }
+
+  .ambience-toggle { bottom: 16px; right: 16px; padding: 10px 14px; }
+}
+
+/* ---------- Small phones ---------- */
+@media (max-width: 480px) {
+  .arch-cutout-container { width: 260px; height: 360px; }
+  .floating-cutout-badge { left: -6px; bottom: 8px; padding: 10px 12px; gap: 10px; }
+  .badge-icon-wrap { width: 34px; height: 34px; }
+  .badge-text-top { font-size: 0.58rem; }
+  .badge-text-main { font-size: 0.95rem; }
+  .floating-star-rating { right: -6px; top: 12px; padding: 8px 14px; }
+
+  .eyebrow { font-size: 0.65rem; letter-spacing: 0.22em; }
+  .eyebrow::before, .eyebrow::after { width: 12px; }
+
+  .form-input, .form-select { padding: 13px 14px; }
+
+  /* Music button becomes a compact round icon */
+  .ambience-toggle { width: 48px; height: 48px; padding: 0; justify-content: center; }
+  .ambience-toggle span { display: none; }
+}
+
+/* ---------- Touch screens: no mouse glow, no "sticky" hover effects ---------- */
+@media (hover: none) {
+  .cursor-glow { display: none; }
+  .btn-lux-primary:hover,
+  .btn-lux-outline:hover,
+  .menu-item-card:hover,
+  .arch-cutout-container:hover,
+  .ambience-toggle:hover { transform: none; }
+}
+
+/* ---------- Respect "reduce motion" accessibility setting ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal-elem { opacity: 1; transform: none; }
 }
