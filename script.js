@@ -386,8 +386,8 @@ function filterMenu(category) {
 // ==========================================================================
 // >>> CHANGE THIS to the restaurant manager's WhatsApp number.
 // Digits only, with country code, no "+", spaces or dashes.
-// Example: India 98765 43210  ->  '919876543210'
-const RESTAURANT_WHATSAPP = '919876543210';
+// Example: India 98765 43210  ->  '7822904916'
+const RESTAURANT_WHATSAPP = '7822904916';
 
 // "2026-09-20" -> "Sept 20" (built manually to avoid timezone shifts)
 function formatBookingDate(dateStr) {
