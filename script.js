@@ -328,7 +328,10 @@ function animateCursor() {
   }
   requestAnimationFrame(animateCursor);
 }
-animateCursor();
+// Skip the mouse-glow loop on touch screens (saves battery)
+if (!window.matchMedia('(hover: none)').matches) {
+  animateCursor();
+}
 
 // Sticky Navbar background blur on scroll
 const navbar = document.getElementById('navbar');
@@ -339,6 +342,23 @@ window.addEventListener('scroll', () => {
     navbar.classList.remove('scrolled');
   }
 }, { passive: true });
+
+// Mobile navigation menu (hamburger)
+const navToggle = document.getElementById('navToggle');
+function setMenu(open) {
+  navbar.classList.toggle('menu-open', open);
+  navToggle.setAttribute('aria-expanded', String(open));
+  navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
+if (navToggle && navbar) {
+  navToggle.addEventListener('click', () => setMenu(!navbar.classList.contains('menu-open')));
+  // Close the menu after tapping a link
+  document.querySelectorAll('#navLinks a').forEach(link => link.addEventListener('click', () => setMenu(false)));
+  // Close on Escape, on tapping outside, or when the screen becomes wide again
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+  document.addEventListener('click', (e) => { if (!navbar.contains(e.target)) setMenu(false); });
+  window.addEventListener('resize', () => { if (window.innerWidth > 1100) setMenu(false); });
+}
 
 // Smooth Reveal Observer for cutouts and elements
 const revealObserver = new IntersectionObserver((entries) => {
