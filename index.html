@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090807">
   <title>AURA & EMBER — Woodfire Hearth & Fine Dining</title>
   
   <!-- Fonts -->
@@ -48,16 +49,23 @@
       <span class="nav-brand-sub">Woodfire & Wine Cellar</span>
     </a>
 
-    <ul class="nav-links">
+    <ul class="nav-links" id="navLinks">
       <li><a href="#about" class="nav-link">The Story</a></li>
       <li><a href="#cutouts" class="nav-link">Craft</a></li>
       <li><a href="#menu" class="nav-link">Tasting Menu</a></li>
       <li><a href="#cellar" class="nav-link">The Cellar</a></li>
       <li><a href="#reserve" class="nav-link">Reservations</a></li>
+      <li class="nav-menu-cta"><a href="#reserve" class="btn-lux btn-lux-primary">Book A Table</a></li>
     </ul>
 
     <div class="nav-action">
       <a href="#reserve" class="btn-lux btn-lux-primary">Book A Table</a>
+      <!-- Hamburger button (mobile & tablet only) -->
+      <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
     </div>
   </nav>
 
@@ -426,7 +434,7 @@
         </div>
 
         <div class="booking-btn-wrap">
-          <button type="submit" class="btn-lux btn-lux-primary" style="padding: 16px 48px; font-size: 0.9rem;">
+          <button type="submit" class="btn-lux btn-lux-primary">
             Confirm Reservation Request
           </button>
         </div>
