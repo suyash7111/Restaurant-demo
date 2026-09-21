@@ -1,528 +1,867 @@
-/* ==========================================================================
-   AURA & EMBER — JAVASCRIPT ANIMATIONS & INTERACTIONS (script.js)
-   ========================================================================== */
+/* ================= NAVBAR ================= */
 
-// Initialize Lucide icons
-if (window.lucide) {
-  lucide.createIcons();
-}
+const navbar = document.getElementById("navbar");
+const mobileMenu = document.getElementById("mobileMenu");
+const mainNav = document.getElementById("mainNav");
 
-// ==========================================================================
-// TABLE AVAILABILITY  ← EDIT THIS SECTION TO MANAGE YOUR BOOKINGS
-// ==========================================================================
-// All dates use the format 'YYYY-MM-DD'. Times must match the form values:
-// '17:30', '19:00', '20:45', '22:00'
-const AVAILABILITY = {
-  // Weekdays the restaurant is closed every week: 0=Sun 1=Mon 2=Tue 3=Wed 4=Thu 5=Fri 6=Sat
-  closedWeekdays: [1],
 
-  // Specific closed dates (holidays, private events)
-  closedDates: ['2026-12-25'],
+window.addEventListener("scroll", () => {
 
-  // Dates where EVERY seating is fully booked
-  fullyBookedDates: ['2026-09-26'],
+    if (window.scrollY > 60) {
+        navbar.classList.add("scrolled");
+    } else {
+        navbar.classList.remove("scrolled");
+    }
 
-  // Individual seatings that are fully booked on a given date
-  fullSlots: {
-    '2026-09-20': ['19:00', '20:45'],
-    '2026-09-22': ['17:30']
-  },
+});
 
-  // Weekdays the Chef's Table (8-10 guests) is offered.
-  // All days by default. Example: [4, 5, 6] = Thursday to Saturday only.
-  chefsTableWeekdays: [0, 1, 2, 3, 4, 5, 6]
+
+/* ================= MOBILE MENU ================= */
+
+mobileMenu.addEventListener("click", () => {
+
+    navbar.classList.toggle("mobile-open");
+
+});
+
+
+document.querySelectorAll("#mainNav a").forEach(link => {
+
+    link.addEventListener("click", () => {
+
+        navbar.classList.remove("mobile-open");
+
+    });
+
+});
+
+
+/* ================= SCROLL REVEAL ================= */
+
+const revealObserver = new IntersectionObserver(
+    entries => {
+
+        entries.forEach(entry => {
+
+            if (entry.isIntersecting) {
+
+                entry.target.classList.add("visible");
+
+                revealObserver.unobserve(entry.target);
+
+            }
+
+        });
+
+    },
+    {
+        threshold: 0.12
+    }
+);
+
+
+document.querySelectorAll(".reveal").forEach(element => {
+
+    revealObserver.observe(element);
+
+});
+
+
+/* ================= MENU DATA ================= */
+
+const menuData = {
+
+    tasting: [
+
+        {
+            name: "Forest Mushroom",
+            description: "Wild mushroom · roasted garlic · black truffle",
+            price: "₹1,250"
+        },
+
+        {
+            name: "Charred Asparagus",
+            description: "Hazelnut · aged parmesan · preserved lemon",
+            price: "₹950"
+        },
+
+        {
+            name: "Herb Crusted Sea Bass",
+            description: "Seasonal vegetables · champagne sauce",
+            price: "₹1,850"
+        },
+
+        {
+            name: "Truffle Risotto",
+            description: "Arborio · black truffle · aged parmesan",
+            price: "₹1,450"
+        },
+
+        {
+            name: "Dark Chocolate",
+            description: "72% cacao · sea salt · vanilla",
+            price: "₹850"
+        }
+
+    ],
+
+
+    alacarte: [
+
+        {
+            name: "Roasted Lamb",
+            description: "Garden herbs · seasonal vegetables · jus",
+            price: "₹1,950"
+        },
+
+        {
+            name: "Wild Sea Bass",
+            description: "Champagne sauce · asparagus · herbs",
+            price: "₹1,850"
+        },
+
+        {
+            name: "Truffle Risotto",
+            description: "Arborio · black truffle · parmesan",
+            price: "₹1,450"
+        },
+
+        {
+            name: "Heritage Tomato",
+            description: "Basil · burrata · aged balsamic",
+            price: "₹950"
+        }
+
+    ],
+
+
+    dessert: [
+
+        {
+            name: "Vanilla Soufflé",
+            description: "Madagascar vanilla · crème anglaise",
+            price: "₹750"
+        },
+
+        {
+            name: "Dark Chocolate",
+            description: "72% chocolate · sea salt · vanilla",
+            price: "₹850"
+        },
+
+        {
+            name: "Seasonal Tart",
+            description: "Fresh fruit · almond cream · sorbet",
+            price: "₹700"
+        }
+
+    ],
+
+
+    wine: [
+
+        {
+            name: "Champagne Brut",
+            description: "France · elegant · crisp · mineral",
+            price: "₹2,800"
+        },
+
+        {
+            name: "Sauvignon Blanc",
+            description: "New Zealand · citrus · fresh herbs",
+            price: "₹1,500"
+        },
+
+        {
+            name: "Pinot Noir",
+            description: "France · red fruit · delicate spice",
+            price: "₹1,900"
+        }
+
+    ]
+
 };
 
-// --- Helpers ---------------------------------------------------------------
-const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const SHORT_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-const dateInput = document.getElementById('bookingDate');
-const bookingTimeSelect = document.getElementById('bookingTime');
-const partySizeSelect = document.getElementById('partySize');
-const availabilityNotice = document.getElementById('availabilityNotice');
+const menuList = document.getElementById("menuList");
 
-// The seating the guest originally wanted (remembered so we can suggest alternatives)
-let desiredTime = '';
 
-// Local-time date string (avoids the UTC shift that toISOString() causes)
-function toDateStr(d) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
+function loadMenu(category) {
 
-function parseDateStr(str) {
-  const [y, m, d] = str.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
+    menuList.style.opacity = "0";
 
-function addDays(str, n) {
-  const d = parseDateStr(str);
-  d.setDate(d.getDate() + n);
-  return toDateStr(d);
-}
+    setTimeout(() => {
 
-function formatLongDate(str) {
-  return `${SHORT_WEEKDAYS[parseDateStr(str).getDay()]}, ${formatBookingDate(str)}`;
-}
+        menuList.innerHTML = "";
 
-const tomorrowDate = new Date();
-tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-const tomorrowStr = toDateStr(tomorrowDate);
+        menuData[category].forEach(item => {
 
-// --- Availability rules ----------------------------------------------------
-// Returns 'open', 'closed' or 'full' for a whole day
-function getDayStatus(dateStr) {
-  const weekday = parseDateStr(dateStr).getDay();
-  if (AVAILABILITY.closedDates.includes(dateStr) || AVAILABILITY.closedWeekdays.includes(weekday)) {
-    return 'closed';
-  }
-  if (AVAILABILITY.fullyBookedDates.includes(dateStr)) {
-    return 'full';
-  }
-  return 'open';
-}
+            const dish = document.createElement("div");
 
-function isSlotFull(dateStr, time) {
-  return (AVAILABILITY.fullSlots[dateStr] || []).includes(time);
-}
+            dish.className = "dish";
 
-function isChefsTableBlocked(dateStr, party) {
-  return party === '8' && !AVAILABILITY.chefsTableWeekdays.includes(parseDateStr(dateStr).getDay());
-}
+            dish.innerHTML = `
+                <div>
+                    <h3>${item.name}</h3>
+                    <p>${item.description}</p>
+                </div>
 
-function getAllTimes() {
-  return Array.from(bookingTimeSelect.options).map(o => o.value).filter(Boolean);
-}
+                <strong class="dish-price">
+                    ${item.price}
+                </strong>
+            `;
 
-function getOpenSlots(dateStr) {
-  if (getDayStatus(dateStr) !== 'open') return [];
-  return getAllTimes().filter(t => !isSlotFull(dateStr, t));
-}
+            menuList.appendChild(dish);
 
-// Finds the next dates (after fromStr) that can take the booking
-function findAlternativeDates(fromStr, { time = '', party = '2', count = 3 } = {}) {
-  const found = [];
-  for (let i = 1; i <= 90 && found.length < count; i++) {
-    const ds = addDays(fromStr, i);
-    if (ds < tomorrowStr) continue;
-    if (getDayStatus(ds) !== 'open') continue;
-    if (isChefsTableBlocked(ds, party)) continue;
-    if (time ? isSlotFull(ds, time) : getOpenSlots(ds).length === 0) continue;
-    found.push(ds);
-  }
-  return found;
-}
-
-function getDefaultDate() {
-  return findAlternativeDates(addDays(tomorrowStr, -1), { count: 1 })[0] || tomorrowStr;
-}
-
-// --- Notice box ------------------------------------------------------------
-function hideNotice() {
-  if (!availabilityNotice) return;
-  availabilityNotice.classList.remove('is-visible');
-  availabilityNotice.innerHTML = '';
-}
-
-function showNotice({ title, text, groups = [] }) {
-  if (!availabilityNotice) return;
-  const groupsHtml = groups.map(g => `
-    <div class="availability-label">${g.label}</div>
-    <div class="availability-options">
-      ${g.chips.map(c => `<button type="button" class="avail-chip ${c.cls || ''}" data-action="${c.action}" data-value="${c.value || ''}">${c.text}</button>`).join('')}
-    </div>`).join('');
-
-  availabilityNotice.innerHTML = `
-    <div class="availability-title">${title}</div>
-    <div class="availability-text">${text}</div>
-    ${groupsHtml}`;
-  availabilityNotice.classList.add('is-visible');
-}
-
-function dateChips(dates) {
-  return dates.map(d => ({ text: formatLongDate(d), action: 'date', value: d }));
-}
-
-// --- Main check (runs whenever date / time / party size changes) -------------
-function updateAvailability() {
-  if (!dateInput || !bookingTimeSelect) return;
-
-  const dateVal = dateInput.value;
-  const party = partySizeSelect.value;
-
-  if (!dateVal) {
-    hideNotice();
-    return;
-  }
-
-  const status = getDayStatus(dateVal);
-  const chefBlocked = isChefsTableBlocked(dateVal, party);
-
-  // Disable unavailable seatings in the dropdown
-  Array.from(bookingTimeSelect.options).forEach(opt => {
-    if (!opt.value) return;
-    const label = opt.dataset.label || opt.textContent;
-    opt.disabled = false;
-    opt.textContent = label;
-    if (status !== 'open') {
-      opt.disabled = true;
-      opt.textContent = `${label} (Unavailable)`;
-    } else if (isSlotFull(dateVal, opt.value)) {
-      opt.disabled = true;
-      opt.textContent = `${label} (Fully booked)`;
-    }
-  });
-
-  // If the chosen seating just became unavailable, remember it and clear it
-  const selectedOpt = bookingTimeSelect.selectedOptions[0];
-  let slotJustTaken = false;
-  if (selectedOpt && selectedOpt.disabled) {
-    desiredTime = selectedOpt.value;
-    bookingTimeSelect.value = '';
-    slotJustTaken = true;
-  }
-
-  const waitlistChip = { text: 'Join the waitlist on WhatsApp', action: 'waitlist', cls: 'waitlist' };
-
-  // Case 1: restaurant closed that day
-  if (status === 'closed') {
-    const dayName = WEEKDAY_NAMES[parseDateStr(dateVal).getDay()];
-    const isWeeklyClosure = AVAILABILITY.closedWeekdays.includes(parseDateStr(dateVal).getDay());
-    showNotice({
-      title: `We're closed on ${formatLongDate(dateVal)}`,
-      text: `${isWeeklyClosure ? 'Our hearth rests every ' + dayName + '.' : 'We are closed on this date.'} These are the next dates with a table available:`,
-      groups: [{ label: 'Next available dates', chips: dateChips(findAlternativeDates(dateVal, { time: desiredTime, party, count: 4 })) }]
-    });
-    return;
-  }
-
-  // Case 2: every seating is taken that day
-  if (status === 'full') {
-    showNotice({
-      title: `${formatLongDate(dateVal)} is fully booked`,
-      text: 'Every seating is taken that day. You can pick another date, or join the waitlist and we will message you if a table opens up.',
-      groups: [
-        { label: 'Other dates', chips: dateChips(findAlternativeDates(dateVal, { time: desiredTime, party, count: 4 })) },
-        { label: 'Or', chips: [waitlistChip] }
-      ]
-    });
-    return;
-  }
-
-  // Case 3: Chef's Table not offered on that weekday
-  if (chefBlocked) {
-    const offered = AVAILABILITY.chefsTableWeekdays.map(d => WEEKDAY_NAMES[d] + 's').join(', ');
-    showNotice({
-      title: `Chef's Table isn't offered on ${WEEKDAY_NAMES[parseDateStr(dateVal).getDay()]}s`,
-      text: `The Chef's Table (8-10 guests) is available on: ${offered}. Choose one of those dates, or book a smaller table.`,
-      groups: [
-        { label: 'Next Chef\'s Table dates', chips: dateChips(findAlternativeDates(dateVal, { time: desiredTime, party: '8', count: 4 })) },
-        { label: 'Or', chips: [{ text: 'Book for 6 guests instead', action: 'party', value: '6' }] }
-      ]
-    });
-    return;
-  }
-
-  // Case 4: the guest's chosen seating is fully booked (day itself is open)
-  if (slotJustTaken) {
-    const slots = getOpenSlots(dateVal).map(t => ({ text: formatBookingTime(t), action: 'time', value: t }));
-    const groups = [];
-    if (slots.length) groups.push({ label: `Other seatings on ${formatBookingDate(dateVal)}`, chips: slots });
-    const sameTimeDates = findAlternativeDates(dateVal, { time: desiredTime, party, count: 3 });
-    if (sameTimeDates.length) groups.push({ label: `${formatBookingTime(desiredTime)} on other dates`, chips: dateChips(sameTimeDates) });
-    groups.push({ label: 'Or', chips: [waitlistChip] });
-
-    showNotice({
-      title: `${formatBookingTime(desiredTime)} is fully booked on ${formatBookingDate(dateVal)}`,
-      text: 'Sorry about that! Here are some ways to still get you a table:',
-      groups
-    });
-    return;
-  }
-
-  hideNotice();
-}
-
-// Clicks on the suggestion buttons inside the notice
-if (availabilityNotice) {
-  availabilityNotice.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const { action, value } = btn.dataset;
-
-    if (action === 'time') {
-      bookingTimeSelect.value = value;
-      desiredTime = value;
-    } else if (action === 'date') {
-      dateInput.value = value;
-      if (desiredTime && getDayStatus(value) === 'open' && !isSlotFull(value, desiredTime)) {
-        bookingTimeSelect.value = desiredTime;
-      }
-    } else if (action === 'party') {
-      partySizeSelect.value = value;
-    } else if (action === 'waitlist') {
-      sendWaitlistRequest();
-      return;
-    }
-    updateAvailability();
-  });
-}
-
-// Waitlist request straight to the manager's WhatsApp
-function sendWaitlistRequest() {
-  const nameEl = document.getElementById('guestName');
-  const phoneEl = document.getElementById('guestPhone');
-  // Ask the guest to fill in name + phone first (shows the browser's "required" bubble)
-  if (!nameEl.reportValidity() || !phoneEl.reportValidity()) return;
-
-  const email = document.getElementById('guestEmail').value.trim();
-  const timeText = desiredTime ? `at ${formatBookingTime(desiredTime)}` : '(any seating time)';
-
-  let message =
-    `Hello Aura & Ember! ${formatBookingDate(dateInput.value)} ${timeText} for ` +
-    `${getGuestsText(partySizeSelect.value)} is fully booked on your website. ` +
-    `Could you please add me to the waitlist in case a table opens up?` +
-    `\n\nName: ${nameEl.value.trim()}\nContact: ${phoneEl.value.trim()}${email ? ' | ' + email : ''}`;
-
-  openWhatsApp(message);
-}
-
-// --- Init ---------------------------------------------------------------------
-if (bookingTimeSelect) {
-  Array.from(bookingTimeSelect.options).forEach(o => { o.dataset.label = o.textContent; });
-  bookingTimeSelect.addEventListener('change', () => {
-    if (bookingTimeSelect.value) desiredTime = bookingTimeSelect.value;
-    updateAvailability();
-  });
-}
-if (partySizeSelect) partySizeSelect.addEventListener('change', updateAvailability);
-if (dateInput) {
-  dateInput.min = tomorrowStr;
-  dateInput.value = getDefaultDate();   // first open date from tomorrow onwards
-  dateInput.addEventListener('change', updateAvailability);
-  dateInput.addEventListener('input', updateAvailability);
-}
-updateAvailability();
-
-// Interactive Warm Glow Follower (requestAnimationFrame loop)
-const cursorGlow = document.getElementById('cursorGlow');
-let mouseX = window.innerWidth / 2;
-let mouseY = window.innerHeight / 2;
-let currentX = mouseX;
-let currentY = mouseY;
-
-window.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
-
-function animateCursor() {
-  currentX += (mouseX - currentX) * 0.12;
-  currentY += (mouseY - currentY) * 0.12;
-  if (cursorGlow) {
-    cursorGlow.style.left = `${currentX}px`;
-    cursorGlow.style.top = `${currentY}px`;
-  }
-  requestAnimationFrame(animateCursor);
-}
-// Skip the mouse-glow loop on touch screens (saves battery)
-if (!window.matchMedia('(hover: none)').matches) {
-  animateCursor();
-}
-
-// Sticky Navbar background blur on scroll
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 40) {
-    navbar.classList.add('scrolled');
-  } else {
-    navbar.classList.remove('scrolled');
-  }
-}, { passive: true });
-
-// Mobile navigation menu (hamburger)
-const navToggle = document.getElementById('navToggle');
-function setMenu(open) {
-  navbar.classList.toggle('menu-open', open);
-  navToggle.setAttribute('aria-expanded', String(open));
-  navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-}
-if (navToggle && navbar) {
-  navToggle.addEventListener('click', () => setMenu(!navbar.classList.contains('menu-open')));
-  // Close the menu after tapping a link
-  document.querySelectorAll('#navLinks a').forEach(link => link.addEventListener('click', () => setMenu(false)));
-  // Close on Escape, on tapping outside, or when the screen becomes wide again
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
-  document.addEventListener('click', (e) => { if (!navbar.contains(e.target)) setMenu(false); });
-  window.addEventListener('resize', () => { if (window.innerWidth > 1100) setMenu(false); });
-}
-
-// Smooth Reveal Observer for cutouts and elements
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('is-visible');
-    }
-  });
-}, {
-  threshold: 0.12,
-  rootMargin: '0px 0px -50px 0px'
-});
-
-document.querySelectorAll('.reveal-elem').forEach((el) => {
-  revealObserver.observe(el);
-});
-
-// Interactive Menu Filtering
-function filterMenu(category) {
-  const tabs = document.querySelectorAll('.tab-btn');
-  tabs.forEach(tab => tab.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-
-  const items = document.querySelectorAll('.menu-item-card');
-  items.forEach(item => {
-    const itemCat = item.getAttribute('data-cat');
-    if (category === 'all' || itemCat === category) {
-      item.style.display = 'flex';
-      setTimeout(() => {
-        item.style.opacity = '1';
-        item.style.transform = 'translateY(0)';
-      }, 50);
-    } else {
-      item.style.opacity = '0';
-      item.style.transform = 'translateY(15px)';
-      setTimeout(() => {
-        item.style.display = 'none';
-      }, 300);
-    }
-  });
-}
-
-// ==========================================================================
-// INSTANT WHATSAPP RESERVATION NOTIFICATION
-// ==========================================================================
-// >>> CHANGE THIS to the restaurant manager's WhatsApp number.
-// Digits only, with country code, no "+", spaces or dashes.
-// Example: India 98765 43210  ->  '7822904916'
-const RESTAURANT_WHATSAPP = '7822904916';
-
-// "2026-09-20" -> "Sept 20" (built manually to avoid timezone shifts)
-function formatBookingDate(dateStr) {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  const months = ['Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-  return `${months[m - 1]} ${d}`;
-}
-
-// "19:00" -> "7:00 PM"
-function formatBookingTime(timeStr) {
-  const [h, min] = timeStr.split(':').map(Number);
-  const suffix = h >= 12 ? 'PM' : 'AM';
-  const hour12 = h % 12 === 0 ? 12 : h % 12;
-  return `${hour12}:${String(min).padStart(2, '0')} ${suffix}`;
-}
-
-function getGuestsText(partyVal) {
-  return partyVal === '8' ? "8-10 Guests (Chef's Table)" : `${partyVal} Guests`;
-}
-
-// Opens WhatsApp (phone app or WhatsApp Web) with a pre-filled message
-function openWhatsApp(message) {
-  const url = `https://wa.me/${RESTAURANT_WHATSAPP}?text=${encodeURIComponent(message)}`;
-  const win = window.open(url, '_blank', 'noopener');
-  if (!win) {
-    // Popup blocked -> open in the same tab instead
-    window.location.href = url;
-  }
-}
-
-// Reservation Form Submission Handler
-function handleBooking(e) {
-  e.preventDefault();
-
-  // 1. Read the form values
-  const name     = document.getElementById('guestName').value.trim();
-  const email    = document.getElementById('guestEmail').value.trim();
-  const phone    = document.getElementById('guestPhone').value.trim();
-  const dateVal  = document.getElementById('bookingDate').value;
-  const timeVal  = document.getElementById('bookingTime').value;
-  const partyVal = document.getElementById('partySize').value;
-  const requests = document.getElementById('specialRequests').value.trim();
-
-  // 2. Safety check: never send a request for a table that isn't available
-  if (
-    getDayStatus(dateVal) !== 'open' ||
-    isSlotFull(dateVal, timeVal) ||
-    isChefsTableBlocked(dateVal, partyVal)
-  ) {
-    desiredTime = timeVal;
-    updateAvailability();
-    availabilityNotice.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-
-  // 3. Build the pre-filled WhatsApp message
-  let message =
-    `Hello Aura & Ember! I would like to reserve a table for ${getGuestsText(partyVal)} ` +
-    `on ${formatBookingDate(dateVal)} at ${formatBookingTime(timeVal)} ` +
-    `under the name ${name}.`;
-
-  message += `\n\nContact: ${phone} | ${email}`;
-  if (requests) {
-    message += `\nSpecial requests: ${requests}`;
-  }
-
-  // 4. Open WhatsApp
-  openWhatsApp(message);
-
-  // 5. Show the on-page confirmation and reset the form
-  const toast = document.getElementById('bookingSuccess');
-  toast.style.display = 'block';
-  if (window.lucide) {
-    lucide.createIcons();
-  }
-  e.target.reset();
-
-  // reset() clears the date and time, so restore the default and re-check availability
-  desiredTime = '';
-  dateInput.value = getDefaultDate();
-  updateAvailability();
-  toast.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-// ==========================================================================
-// REAL COZY RESTAURANT PIANO SOUNDTRACK PLAYER
-// ==========================================================================
-const bgMusic = document.getElementById('bgMusic');
-const ambienceBtn = document.getElementById('ambienceBtn');
-const ambienceText = document.getElementById('ambienceText');
-
-if (ambienceBtn && bgMusic) {
-  bgMusic.volume = 0.55;
-
-  ambienceBtn.addEventListener('click', () => {
-    if (bgMusic.paused) {
-      const playPromise = bgMusic.play();
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          ambienceBtn.classList.add('ambience-active');
-          ambienceText.textContent = 'Hearth Ambience: Playing ♪';
-        }).catch(error => {
-          console.warn('Browser blocked audio:', error);
-          ambienceText.textContent = 'Tap to allow sound';
         });
-      }
-    } else {
-      bgMusic.pause();
-      ambienceBtn.classList.remove('ambience-active');
-      ambienceText.textContent = 'Hearth Fire Ambience';
-    }
-  });
 
-  bgMusic.addEventListener('pause', () => {
-    ambienceBtn.classList.remove('ambience-active');
-    ambienceText.textContent = 'Hearth Fire Ambience';
-  });
+        menuList.style.opacity = "1";
+
+    }, 180);
+
 }
+
+
+/* Initial menu */
+
+loadMenu("tasting");
+
+
+/* Menu tabs */
+
+document.querySelectorAll(".menu-tab").forEach(tab => {
+
+    tab.addEventListener("click", () => {
+
+        document
+            .querySelectorAll(".menu-tab")
+            .forEach(button => {
+                button.classList.remove("active");
+            });
+
+
+        tab.classList.add("active");
+
+
+        const category = tab.dataset.menu;
+
+        loadMenu(category);
+
+    });
+
+});
+
+
+/* ================= GALLERY ================= */
+
+const galleryImages = Array.from(
+    document.querySelectorAll(".gallery-item img")
+);
+
+
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightboxImage");
+
+const closeLightbox =
+    document.getElementById("lightboxClose");
+
+const previousImage =
+    document.getElementById("lightboxPrev");
+
+const nextImage =
+    document.getElementById("lightboxNext");
+
+
+let currentImage = 0;
+
+
+galleryImages.forEach((image, index) => {
+
+    image.parentElement.addEventListener("click", () => {
+
+        currentImage = index;
+
+        showGalleryImage();
+
+        lightbox.classList.add("show");
+
+        document.body.classList.add("no-scroll");
+
+    });
+
+});
+
+
+function showGalleryImage() {
+
+    lightboxImage.src =
+        galleryImages[currentImage].src;
+
+}
+
+
+function closeGallery() {
+
+    lightbox.classList.remove("show");
+
+    document.body.classList.remove("no-scroll");
+
+}
+
+
+closeLightbox.addEventListener("click", closeGallery);
+
+
+nextImage.addEventListener("click", event => {
+
+    event.stopPropagation();
+
+    currentImage++;
+
+    if (currentImage >= galleryImages.length) {
+        currentImage = 0;
+    }
+
+    showGalleryImage();
+
+});
+
+
+previousImage.addEventListener("click", event => {
+
+    event.stopPropagation();
+
+    currentImage--;
+
+    if (currentImage < 0) {
+        currentImage = galleryImages.length - 1;
+    }
+
+    showGalleryImage();
+
+});
+
+
+lightbox.addEventListener("click", event => {
+
+    if (event.target === lightbox) {
+        closeGallery();
+    }
+
+});
+
+
+document.addEventListener("keydown", event => {
+
+    if (!lightbox.classList.contains("show")) {
+        return;
+    }
+
+
+    if (event.key === "Escape") {
+        closeGallery();
+    }
+
+
+    if (event.key === "ArrowRight") {
+        nextImage.click();
+    }
+
+
+    if (event.key === "ArrowLeft") {
+        previousImage.click();
+    }
+
+});
+
+
+/* ================= RESERVATION ================= */
+
+const bookingSteps =
+    document.querySelectorAll(".booking-step");
+
+const experienceOptions =
+    document.querySelectorAll(".experience-option");
+
+const timeButtons =
+    document.querySelectorAll(".time-grid button");
+
+const confirmBooking =
+    document.getElementById("confirmBooking");
+
+
+let currentStep = 1;
+
+let selectedExperience = "";
+
+let selectedTime = "";
+
+
+/* Minimum date */
+
+const dateInput =
+    document.getElementById("bookingDate");
+
+
+const today =
+    new Date();
+
+
+const year =
+    today.getFullYear();
+
+
+const month =
+    String(today.getMonth() + 1).padStart(2, "0");
+
+
+const day =
+    String(today.getDate()).padStart(2, "0");
+
+
+const todayString =
+    `${year}-${month}-${day}`;
+
+
+dateInput.min = todayString;
+
+
+/* Show booking step */
+
+function showBookingStep(step) {
+
+    currentStep = step;
+
+
+    bookingSteps.forEach(section => {
+
+        section.classList.remove("active");
+
+        if (
+            Number(section.dataset.step) === step
+        ) {
+
+            section.classList.add("active");
+
+        }
+
+    });
+
+}
+
+
+/* Continue buttons */
+
+document.querySelectorAll(".next-btn").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+
+        /* STEP 1 */
+
+        if (currentStep === 1) {
+
+            const date =
+                dateInput.value;
+
+
+            if (!date) {
+
+                alert("Please select a date.");
+
+                return;
+
+            }
+
+
+            const selectedDate =
+                new Date(date + "T00:00:00");
+
+
+            const currentDate =
+                new Date();
+
+
+            currentDate.setHours(0, 0, 0, 0);
+
+
+            if (selectedDate < currentDate) {
+
+                alert("Please select a future date.");
+
+                return;
+
+            }
+
+        }
+
+
+        /* STEP 2 */
+
+        if (
+            currentStep === 2 &&
+            !selectedExperience
+        ) {
+
+            alert(
+                "Please choose your dining experience."
+            );
+
+            return;
+
+        }
+
+
+        /* STEP 3 */
+
+        if (
+            currentStep === 3 &&
+            !selectedTime
+        ) {
+
+            alert("Please select a time.");
+
+            return;
+
+        }
+
+
+        showBookingStep(currentStep + 1);
+
+    });
+
+});
+
+
+/* ================= EXPERIENCE SELECTION ================= */
+
+experienceOptions.forEach(option => {
+
+    option.addEventListener("click", () => {
+
+        experienceOptions.forEach(item => {
+
+            item.classList.remove("selected");
+
+        });
+
+
+        option.classList.add("selected");
+
+
+        selectedExperience =
+            option
+                .querySelector("strong")
+                .textContent;
+
+    });
+
+});
+
+
+/* ================= TIME SELECTION ================= */
+
+timeButtons.forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        timeButtons.forEach(item => {
+
+            item.classList.remove("selected");
+
+        });
+
+
+        button.classList.add("selected");
+
+
+        selectedTime =
+            button.textContent.trim();
+
+    });
+
+});
+
+
+/* ================= CONFIRM RESERVATION ================= */
+
+confirmBooking.addEventListener("click", () => {
+
+    const name =
+        document
+            .getElementById("guestName")
+            .value
+            .trim();
+
+
+    const phone =
+        document
+            .getElementById("guestPhone")
+            .value
+            .trim();
+
+
+    const email =
+        document
+            .getElementById("guestEmail")
+            .value
+            .trim();
+
+
+    const date =
+        dateInput.value;
+
+
+    const guests =
+        document
+            .getElementById("guestCount")
+            .value;
+
+
+    /* Validate name */
+
+    if (!name) {
+
+        alert("Please enter your name.");
+
+        return;
+
+    }
+
+
+    /* Validate phone */
+
+    if (!phone) {
+
+        alert("Please enter your mobile number.");
+
+        return;
+
+    }
+
+
+    /* Validate email */
+
+    if (!email) {
+
+        alert("Please enter your email address.");
+
+        return;
+
+    }
+
+
+    const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+    if (!emailPattern.test(email)) {
+
+        alert("Please enter a valid email address.");
+
+        return;
+
+    }
+
+
+    /* Display confirmation */
+
+    document.getElementById("successName")
+        .textContent = name;
+
+
+    document.getElementById("successDate")
+        .textContent = formatDate(date);
+
+
+    document.getElementById("successGuests")
+        .textContent = guests + " Guests";
+
+
+    document.getElementById("successTime")
+        .textContent = selectedTime;
+
+
+    /* Generate reservation ID */
+
+    const reservationID =
+        "ME-" +
+        Math.floor(
+            10000 + Math.random() * 90000
+        );
+
+
+    document.getElementById("reservationId")
+        .textContent = reservationID;
+
+
+    /* Hide booking steps */
+
+    bookingSteps.forEach(step => {
+
+        step.style.display = "none";
+
+    });
+
+
+    /* Show success */
+
+    document.querySelector(".booking-success")
+        .style.display = "block";
+
+
+    document.querySelector(".booking-card")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+});
+
+
+/* ================= DATE FORMAT ================= */
+
+function formatDate(dateString) {
+
+    const date =
+        new Date(dateString + "T00:00:00");
+
+
+    return date.toLocaleDateString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* ================= GOOGLE CALENDAR ================= */
+
+document
+    .getElementById("calendarBtn")
+    .addEventListener("click", () => {
+
+
+        const date =
+            dateInput.value;
+
+
+        const name =
+            document
+                .getElementById("guestName")
+                .value;
+
+
+        if (!date) {
+
+            alert("Reservation date is missing.");
+
+            return;
+
+        }
+
+
+        const formattedDate =
+            date.replaceAll("-", "");
+
+
+        const start =
+            formattedDate + "T180000";
+
+
+        const end =
+            formattedDate + "T213000";
+
+
+        const url =
+            `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Maison%20Élan%20Reservation&dates=${start}/${end}&details=Reservation%20for%20${encodeURIComponent(name)}&location=Pune%2C%20Maharashtra`;
+
+
+        window.open(
+            url,
+            "_blank"
+        );
+
+    });
+
+
+/* ================= TESTIMONIAL SLIDER ================= */
+
+const testimonials =
+    document.querySelectorAll(".testimonial");
+
+
+const dots =
+    document.querySelectorAll(
+        ".slider-dots button"
+    );
+
+
+let testimonialIndex = 0;
+
+
+function showTestimonial(index) {
+
+    testimonials.forEach(item => {
+
+        item.classList.remove("active");
+
+    });
+
+
+    dots.forEach(dot => {
+
+        dot.classList.remove("active");
+
+    });
+
+
+    testimonials[index]
+        .classList.add("active");
+
+
+    dots[index]
+        .classList.add("active");
+
+}
+
+
+dots.forEach((dot, index) => {
+
+    dot.addEventListener("click", () => {
+
+        testimonialIndex = index;
+
+        showTestimonial(
+            testimonialIndex
+        );
+
+    });
+
+});
+
+
+setInterval(() => {
+
+    testimonialIndex++;
+
+
+    if (
+        testimonialIndex >=
+        testimonials.length
+    ) {
+
+        testimonialIndex = 0;
+
+    }
+
+
+    showTestimonial(
+        testimonialIndex
+    );
+
+}, 5000);
